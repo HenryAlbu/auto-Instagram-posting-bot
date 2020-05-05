@@ -5,20 +5,21 @@ from selenium import webdriver
 # Variables
 username = ""
 password = ""
-minimizeWindow = False # True or False
+minimizeWindow = False  # True or False
 
 # Chrome browser options
-mobile_emulation = {"deviceMetrics": { "width": 360, "height": 640, "pixelRatio": 3.0 },
-                    "userAgent": "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19" }
+mobile_emulation = {"deviceMetrics": {"width": 360, "height": 640, "pixelRatio": 3.0},
+                    "userAgent": "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"}
 opts = webdriver.ChromeOptions()
 opts.add_argument("window-size=1,765")
 opts.add_experimental_option("mobileEmulation", mobile_emulation)
-driver = webdriver.Chrome(executable_path=r"chromedriver.exe",options=opts) #you must enter the path to your driver
+driver = webdriver.Chrome(executable_path=r"chromedriver.exe", options=opts)  # you must enter the path to your driver
 
 # Opens Instagram
 main_url = "https://www.instagram.com"
 driver.get(main_url)
 sleep(4)
+
 
 def login():
     print("In login")
@@ -32,6 +33,20 @@ def login():
     sleep(1)
     password_input.submit()
 
+
+def remove_popups():
+    try:
+        driver.find_element_by_xpath("//a[contains(text(),'Not Now')]").click()
+    except:
+        try:
+            driver.find_element_by_xpath("//button[contains(text(),'Not Now')]").click()
+        except:
+            try:
+                driver.find_element_by_xpath("//button[contains(text(),'Cancel')]").click()
+            except:
+                pass
+
+
 def close_save_info():
     print("Close Save Info")
     try:
@@ -39,12 +54,14 @@ def close_save_info():
     except:
         pass
 
+
 def close_get_notification():
     print("Close get notification")
     try:
         driver.find_element_by_xpath("//button[contains(text(),'Not Now')]").click()
     except:
         pass
+
 
 def close_add_to_home():
     try:
@@ -54,6 +71,7 @@ def close_add_to_home():
         print("passed")
         pass
 
+
 def add_post():
     try:
         print("add post")
@@ -62,9 +80,10 @@ def add_post():
         print("passed")
         pass
 
+
 def post():
     # Readies the content for instagram
-    with open('filesDict.txt') as json_file:
+    with open('filesDict.txt', encoding="utf8") as json_file:
         data = json.load(json_file)
         print("Instagram" + str(data))
         if bool(data):
@@ -78,7 +97,7 @@ def post():
                     break
 
             # saves file without first item
-            with open('filesDict.txt', 'w') as outfile:
+            with open('filesDict.txt', 'w', encoding="utf8") as outfile:
                 json.dump(data, outfile)
 
             print(image_path)
@@ -106,24 +125,22 @@ def post():
     os.remove(image_path)
 
 
-
 # Executes functions in order
 def orderedFunctions():
     login()
-    sleep(3)
-    close_save_info()
-    sleep(3)
-    close_get_notification()
-    sleep(3)
-    close_add_to_home()
-    sleep(3)
-    sleep(3)
+    sleep(5)
+    remove_popups()
+    sleep(5)
+    remove_popups()
+    sleep(5)
+    remove_popups()
+    sleep(5)
+    sleep(5)
     add_post()
-    sleep(3)
+    sleep(5)
     post()
     sleep(5)
-    close_get_notification()
+    remove_popups()
     # Minimizes window if variable = True
     if minimizeWindow:
         driver.minimize_window()
-
