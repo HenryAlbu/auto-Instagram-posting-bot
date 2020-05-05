@@ -2,6 +2,7 @@ import urllib.request
 import json, html
 import insta
 from time import sleep
+from PIL import Image
 
 
 # Dictionary that stores the url,title,Id of each item into file
@@ -11,12 +12,16 @@ with open('filesCheck.txt') as f:
     filesCheck = [line.rstrip() for line in f]
 
 # Downloads images/videos
-def download(url, file_path, file_name, type):
-    if type == "Photo":
-        full_path = file_path + file_name + '.jpg'
-    else:
-        full_path = file_path + file_name + '.mp4'
+def download(url, file_path, file_name):
+    full_path = file_path + file_name + '.jpg'
     urllib.request.urlretrieve(url, full_path)
+
+def make_square(im, min_size=256, fill_color=(0, 0, 0, 0)):
+    x, y = im.size
+    size = max(min_size, x, y)
+    new_im = Image.new('RGB', (size, size), fill_color)
+    new_im.paste(im, (int((size - x) / 2), int((size - y) / 2)))
+    return new_im
 
 # Print section of JSON
 def printResults(data):
@@ -27,7 +32,11 @@ def printResults(data):
         # Checks if its a new file or has already downloaded
         if i["type"] == "Photo" and i["id"] not in filesCheck:
             # calls download function and passes arg
-            download(i["images"]["image700"]["url"], 'files/', i["id"], "Photo")
+            download(i["images"]["image700"]["url"], 'files/', i["id"])
+            if i["images"]["image700"]["height"] > 700:
+                image = Image.open('files/' + i["id"] + '.jpg')
+                new_image = make_square(image)
+                new_image.save('files/' + i["id"] + '.jpg')
             #print(i["images"]["image700"]["url"])
             # checks if any changes were made to the file filesDict
             try:
@@ -76,15 +85,15 @@ def getData():
 
 getData()
 
-if filesDict['dict'] != []:
-    insta.orderedFunctions()
+#if filesDict['dict'] != []:
+#    insta.orderedFunctions()
 
 while True:
     print("innnnn")
-    sleep(50)
+    sleep(10)
     getData()
-    if filesDict['dict'] != []:
-        insta.add_post()
-        sleep(3)
-        insta.post()
+    #if filesDict['dict'] != []:
+    #    insta.add_post()
+    #    sleep(3)
+    #    insta.post()
 
