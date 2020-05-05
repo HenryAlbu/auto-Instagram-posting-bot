@@ -9,7 +9,8 @@ minimizeWindow = False  # True or False
 
 # Chrome browser options
 mobile_emulation = {"deviceMetrics": {"width": 360, "height": 640, "pixelRatio": 3.0},
-                    "userAgent": "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"}
+                    "userAgent": "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 "
+                                 "(KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"}
 opts = webdriver.ChromeOptions()
 opts.add_argument("window-size=1,765")
 opts.add_experimental_option("mobileEmulation", mobile_emulation)
