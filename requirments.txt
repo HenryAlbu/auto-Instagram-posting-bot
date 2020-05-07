@@ -1,2 +1,4 @@
 selenium
 Pillow
+pysimplegui
+autoit

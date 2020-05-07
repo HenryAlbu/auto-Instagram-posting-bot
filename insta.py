@@ -1,41 +1,55 @@
-import autoit, json, os
+import autoit, json, os, settings, platform
 from time import sleep
 from selenium import webdriver
 
 # Variables
-username = ""
-password = ""
 minimizeWindow = False  # True or False
+driver = ""
 
-# Chrome browser options
-mobile_emulation = {"deviceMetrics": {"width": 360, "height": 640, "pixelRatio": 3.0},
-                    "userAgent": "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 "
-                                 "(KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"}
-opts = webdriver.ChromeOptions()
-opts.add_argument("window-size=1,765")
-opts.add_experimental_option("mobileEmulation", mobile_emulation)
-driver = webdriver.Chrome(executable_path=r"chromedriver.exe", options=opts)  # you must enter the path to your driver
 
-# Opens Instagram
-main_url = "https://www.instagram.com"
-driver.get(main_url)
-sleep(4)
 
+def launch_inst():
+    global driver
+    print("Opening instagram")
+    # Chrome browser options
+    mobile_emulation = {"deviceMetrics": {"width": 360, "height": 640, "pixelRatio": 3.0},
+                        "userAgent": "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"}
+    opts = webdriver.ChromeOptions()
+    opts.add_argument("window-size=1,765")
+    opts.add_experimental_option("mobileEmulation", mobile_emulation)
+    # Checks if on Mac or Windows
+    if platform.system() == "Windows":
+        driver = webdriver.Chrome(executable_path=r"chromedriver.exe", options=opts)
+    else:
+        driver = webdriver.Chrome(options=opts)
+
+    # Opens Instagram
+    main_url = "https://www.instagram.com"
+    driver.get(main_url)
+    sleep(10)
+    ordered_functions()
 
 def login():
-    print("In login")
-    login_button = driver.find_element_by_xpath("//button[contains(text(),'Log In')]")
-    login_button.click()
-    sleep(2)
-    username_input = driver.find_element_by_xpath("//input[@name='username']")
-    username_input.send_keys(username)
-    password_input = driver.find_element_by_xpath("//input[@name='password']")
-    password_input.send_keys(password)
-    sleep(1)
-    password_input.submit()
+    print("Logging into Instagram")
+    driver.find_element_by_xpath("//button[contains(text(),'Log In')]").click()
+    if settings.login_type == "Facebook":
+        print("Going through Facebook")
+        driver.find_element_by_xpath("//button[contains(text(),'Continue with Facebook')]").click()
+        sleep(settings.wait_time)
+        driver.find_element_by_xpath("//input[@name='email']").send_keys(settings.username)
+        driver.find_element_by_xpath("//input[@name='pass']").send_keys(settings.password)
+        sleep(settings.wait_time)
+        driver.find_element_by_xpath("//button[@name='login']").click()
+    else:
+        sleep(settings.wait_time)
+        driver.find_element_by_xpath("//input[@name='username']").send_keys(settings.username)
+        driver.find_element_by_xpath("//input[@name='password']").send_keys(settings.password)
+        sleep(settings.wait_time)
+        driver.find_element_by_xpath("//button[@type='submit']").click()
 
 
 def remove_popups():
+    print("Removing any popups")
     try:
         driver.find_element_by_xpath("//a[contains(text(),'Not Now')]").click()
     except:
@@ -48,45 +62,18 @@ def remove_popups():
                 pass
 
 
-def close_save_info():
-    print("Close Save Info")
-    try:
-        driver.find_element_by_xpath("//a[contains(text(),'Not Now')]").click()
-    except:
-        pass
-
-
-def close_get_notification():
-    print("Close get notification")
-    try:
-        driver.find_element_by_xpath("//button[contains(text(),'Not Now')]").click()
-    except:
-        pass
-
-
-def close_add_to_home():
-    try:
-        print("close add to home")
-        driver.find_element_by_xpath("//button[contains(text(),'Cancel')]").click()
-    except:
-        print("passed")
-        pass
-
-
 def add_post():
     try:
-        print("add post")
         driver.find_element_by_xpath("//div[@role='menuitem']").click()
     except:
-        print("passed")
         pass
 
 
 def post():
+    print("Adding post")
     # Readies the content for instagram
     with open('filesDict.txt', encoding="utf8") as json_file:
         data = json.load(json_file)
-        print("Instagram" + str(data))
         if bool(data):
             # gets first item in filesDict and sets it as the next instagram upload
             image_path = os.getcwd() + "\\files\\" + data['dict'][0]['id'] + ".jpg"
@@ -101,46 +88,38 @@ def post():
             with open('filesDict.txt', 'w', encoding="utf8") as outfile:
                 json.dump(data, outfile)
 
-            print(image_path)
-            print(caption)
 
     # Opens File Explore window
-    print("Starting open")
+    print("Opening file explorer")
     autoit.win_active("Open")
-    print("Starting open Edit 1")
-    autoit.control_send("Open", "Edit1", image_path)
+    sleep(0)
+    autoit.control_set_text("Open", "Edit1", image_path)
     autoit.control_send("Open", "Edit1", "{ENTER}")
-    sleep(2)
+    sleep(settings.wait_time)
 
     # Clicks through options and adds caption after file is added
     try:
         driver.find_element_by_xpath("//span[contains(text(),'Expand')]").click()
     except:
         pass
-    sleep(5)
+    sleep(settings.wait_time)
     driver.find_element_by_xpath("//button[contains(text(),'Next')]").click()
-    sleep(5)
+    sleep(settings.wait_time)
     caption_field = driver.find_element_by_xpath("//textarea[@aria-label='Write a caption…']")
     caption_field.send_keys(caption)
     driver.find_element_by_xpath("//button[contains(text(),'Share')]").click()
-    os.remove(image_path)
+    if not settings.keep_images:
+        os.remove(image_path)
 
 
 # Executes functions in order
-def orderedFunctions():
+def ordered_functions():
     login()
-    sleep(5)
+    sleep(settings.wait_time)
     remove_popups()
-    sleep(5)
+    sleep(settings.wait_time)
     remove_popups()
-    sleep(5)
-    remove_popups()
-    sleep(5)
-    sleep(5)
-    add_post()
-    sleep(5)
-    post()
-    sleep(5)
+    sleep(settings.wait_time)
     remove_popups()
     # Minimizes window if variable = True
     if minimizeWindow:
