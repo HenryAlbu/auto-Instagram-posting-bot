@@ -1,16 +1,15 @@
 import urllib.request
-import json, html, insta, glob, os
+import json, html, insta, glob, os, settings
 from time import sleep
 from PIL import Image
+
+
 
 # Dictionary that stores the url,title,Id of each item into file
 filesDict = {'dict': []}
 # Clears filesDict on start
 with open('filesDict.txt', 'w+', encoding="utf8") as outfile:
     json.dump(filesDict, outfile, ensure_ascii=False)
-
-# Variable used as a flag on if the program has been executed
-initialRun = 0
 
 # Creates filesCheck if not existent
 try:
@@ -26,7 +25,7 @@ with open('filesCheck.txt', 'r') as f:
     data = f.read().splitlines(True)
     for line in f:
         count += 1
-    count -= 10
+    count -= 100
 with open('filesCheck.txt', 'w') as fout:
     fout.writelines(data[count:])
 # Array that loads past used files from fileCheck.txt
@@ -50,7 +49,7 @@ def make_square(im, min_size=256, fill_color=(0, 0, 0, 0)):
 
 
 # Print section of JSON
-def printResults(data):
+def print_results(data):
     global filesDict
     theJSON = json.loads(data)
     # Loops through the JSON
@@ -64,7 +63,7 @@ def printResults(data):
                 image = Image.open('files/' + i["id"] + '.jpg')
                 new_image = make_square(image)
                 new_image.save('files/' + i["id"] + '.jpg')
-            # print(i["images"]["image700"]["url"])
+            print("Downloading image: " + i["images"]["image700"]["url"])
             # checks if any changes were made to the file filesDict
             try:
                 with open('filesDict.txt', encoding="utf8") as data_file:
@@ -93,57 +92,54 @@ def printResults(data):
                 filehandle.write('%s\n' % listitem)
 
 
-def getData():
-    # Gets the JSON from the URL and send a header so that it looks like a legit request
-    urlData = "https://9gag.com/v1/group-posts/group/default/type/hot"
-    user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
-    headers = {'User-Agent': user_agent, }
+def get_data():
 
-    # Opens the URL
-    request = urllib.request.Request(urlData, None, headers=headers)
-    webUrl = urllib.request.urlopen(request)
+    for x in settings.ninegag_categories:
+        try:
+            # Gets the JSON from the URL and send a header so that it looks like a legit request
+            if x in ("hot","trending"):
+                urlData = "https://9gag.com/v1/group-posts/group/default/type/" + x
+            else:
+                urlData = "https://9gag.com/v1/group-posts/group/" + x
 
-    # If URL is opened with success, Then run printResults function
-    if webUrl.getcode() == 200:
-        data = webUrl.read()
-        printResults(data)
-    else:
-        print("Error")
+            user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
+            headers = {'User-Agent': user_agent, }
+            print("Getting images from category: " + x)
+            # Opens the URL
+            request = urllib.request.Request(urlData, None, headers=headers)
+            webUrl = urllib.request.urlopen(request)
+            # If URL is opened with success, Then run printResults function
+            if webUrl.getcode() == 200:
+                data = webUrl.read()
+                print_results(data)
+            else:
+                print("Error")
+        except:
+            pass
 
 
-# Runs on start
-# Removes images from files if left over from previous runs
-files = glob.glob('files/*')
-for f in files:
-    os.remove(f)
+def loop_posting():
+    counter = 0
+    while True:
+        global filesDict
+        # Loops through at a set interval and adds another photo
+        get_data()
+        with open('filesDict.txt', encoding="utf8") as data_file:
+            filesDict = json.load(data_file)
+        if filesDict['dict'] and counter < settings.post_limit:
+            insta.remove_popups()
+            sleep(settings.wait_time)
+            insta.add_post()
+            sleep(settings.wait_time)
+            insta.post()
+            sleep(settings.wait_time)
+            insta.remove_popups()
+            counter += 1
+            print("Posting again in: 50 seconds")
+        elif counter >= settings.post_limit:
+            print("The program has reached the max post limit of: " + str(settings.post_limit))
+            break
+        else:
+            print("Waiting for new images")
+        sleep(settings.post_time)
 
-# Gets the data function
-getData()
-# If there are new images on start then login else wait
-if filesDict['dict']:
-    insta.orderedFunctions()
-else:
-    print("Waiting for new images")
-    print("inside if")
-    print(len(filesDict['dict']))
-    print(filesDict['dict'])
-    initialRun = 1
-
-# Loops through at a set interval and adds another photo
-while True:
-    sleep(15)
-    getData()
-    with open('filesDict.txt', encoding="utf8") as data_file:
-        filesDict = json.load(data_file)
-    if filesDict['dict'] != [] and initialRun == 0:
-        print("inside if")
-        print(len(filesDict['dict']))
-        print(filesDict['dict'])
-        insta.add_post()
-        sleep(3)
-        insta.post()
-    elif initialRun == 1 and filesDict['dict'] == 1:
-        initialRun = 0
-        insta.orderedFunctions()
-    else:
-        print("Waiting for new images")
