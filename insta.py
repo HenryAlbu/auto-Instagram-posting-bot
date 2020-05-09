@@ -1,11 +1,17 @@
-import autoit, json, os, settings, platform
+#!/usr/bin/env Python3
 from time import sleep
+import autoit
+import json
+import os
+import platform
+import settings
+import insta_scraper
+import ninegag
 from selenium import webdriver
 
 # Variables
 minimizeWindow = False  # True or False
 driver = ""
-
 
 
 def launch_inst():
@@ -28,6 +34,7 @@ def launch_inst():
     driver.get(main_url)
     sleep(10)
     ordered_functions()
+
 
 def login():
     print("Logging into Instagram")
@@ -72,11 +79,11 @@ def add_post():
 def post():
     print("Adding post")
     # Readies the content for instagram
-    with open('filesDict.txt', encoding="utf8") as json_file:
+    with open('filesDict.json', encoding="utf8") as json_file:
         data = json.load(json_file)
         if bool(data):
             # gets first item in filesDict and sets it as the next instagram upload
-            image_path = os.getcwd() + "\\files\\" + data['dict'][0]['id'] + ".jpg"
+            image_path = os.getcwd() + "\\assets\\" + data['dict'][0]['id'] + ".jpg"
             caption = data['dict'][0]['title']
             # Loops and removes the first item since it has been uploaded
             for i in range(len(data)):
@@ -85,14 +92,12 @@ def post():
                     break
 
             # saves file without first item
-            with open('filesDict.txt', 'w', encoding="utf8") as outfile:
+            with open('filesDict.json', 'w', encoding="utf8") as outfile:
                 json.dump(data, outfile)
-
 
     # Opens File Explore window
     print("Opening file explorer")
     autoit.win_active("Open")
-    sleep(0)
     autoit.control_set_text("Open", "Edit1", image_path)
     autoit.control_send("Open", "Edit1", "{ENTER}")
     sleep(settings.wait_time)
@@ -108,8 +113,6 @@ def post():
     caption_field = driver.find_element_by_xpath("//textarea[@aria-label='Write a caption…']")
     caption_field.send_keys(caption)
     driver.find_element_by_xpath("//button[contains(text(),'Share')]").click()
-    if not settings.keep_images:
-        os.remove(image_path)
 
 
 # Executes functions in order
@@ -124,3 +127,35 @@ def ordered_functions():
     # Minimizes window if variable = True
     if minimizeWindow:
         driver.minimize_window()
+
+
+def loop_posting():
+    while True:
+        # Loops through at a set interval and adds another photo
+        if settings.post_source == "9gag":
+            ninegag.get_data()
+        else:
+            if settings.keep_checking or settings.counter == 0:
+                insta_scraper.get_data()
+            else:
+                print("Program is done getting and posting previous user posts")
+                break
+
+        with open('filesDict.json', encoding="utf8") as data_file:
+            settings.filesDict = json.load(data_file)
+        if settings.filesDict['dict'] and settings.counter < settings.post_limit:
+            remove_popups()
+            sleep(settings.wait_time)
+            add_post()
+            sleep(settings.wait_time)
+            post()
+            sleep(settings.wait_time)
+            remove_popups()
+            settings.counter += 1
+            print("Posting again in: 50 seconds")
+        elif settings.counter >= settings.post_limit:
+            print("The program has reached the max post limit of: " + str(settings.post_limit))
+            break
+        else:
+            print("Waiting for new images")
+        sleep(settings.post_time)
