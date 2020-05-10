@@ -6,30 +6,36 @@ import settings
 import threading
 
 
-
 def long_operation_thread(gui_queue, post_source):
     # Launches instagram and chromedriver
     insta.launch_inst()
-    # Starts posting based on selected user input
+    # Starts posting based on selected user inputs
     insta.loop_posting()
 
+# Makes sure everything is in order before program starts
 def verifications(values):
-    if "" in (values['username'],values['password']):
+    # if username/password is not filled out
+    if "" in (values['username'], values['password']):
         print('Username/Password is empty')
         return False
+    # if post source and login type are incorrect
     if values['post_source'] == "Instagram user" and values['login_type'] == "Facebook":
         print('If you are posting from an Instagram user, you need to sign in using a regular Instagram account')
         return False
+    # if 9gag is chosen but no category is selected
     if values['post_source'] == "9gag" and settings.ninegag_categories == []:
         print('You have not selected any categories to post from 9gag')
         return False
+    # if post source is Instagram but no user was given
     if values['post_source'] == "Instagram user" and values['scrape_user'] == "":
         print('You need to add a username to take posts from')
         return False
     return True
 
-# ------------------------------- UI -------------------------------
+
+# The UI
 def the_gui():
+    # sets theme
     sg.ChangeLookAndFeel('DarkBrown1')
     gui_queue = queue.Queue()
 
@@ -39,7 +45,8 @@ def the_gui():
             [sg.Text('Post from:', size=(17, 1), font=("Roboto", 8)),
              sg.InputCombo(('9gag', 'Instagram user'), default_value="9gag", key="post_source", size=(25, 1))],
             [sg.Text('How will you sign in:', size=(17, 1), font=("Roboto", 8)),
-             sg.InputCombo(('Facebook', 'Regular Instagram Login'), default_value="Facebook", key="login_type", size=(25, 1))],
+             sg.InputCombo(('Facebook', 'Regular Instagram Login'), default_value="Facebook", key="login_type",
+                           size=(25, 1))],
             [sg.Text('Username/Email:', size=(17, 1), font=("Roboto", 8)),
              sg.InputText('', key="username", size=(27, 1))],
             [sg.Text('Password:', size=(17, 1), font=("Roboto", 8)),
@@ -66,7 +73,7 @@ def the_gui():
                      font=("Roboto", 8), pad=(0, 0))],
             [sg.Text(
                 'In order to use the Instagram scrapping option you will need to log in using a regular Instagram '
-                'accounts. Using a facebook login will not work',
+                'accounts. Using a facebook login will not work. PRIVATE USER SCRAPPING ONLY WORKS IF YOU ARE FOLLOWING THE USER',
                 size=(105, 0), font=("Roboto", 8), pad=(5, 0))],
             [sg.Text(
                 'WARNING: THIS FEATURE MIGHT NOT WORK AFTER JUNE 29/2020 - INSTAGRAM IS UPDATING ITS API',
@@ -104,7 +111,8 @@ def the_gui():
             [sg.Text('# of past images to add to queue:', size=(28, 1), font=("Roboto", 8)),
              sg.Spin(values=[i for i in range(0, 1000)], key="past_images", initial_value=5, size=(6, 1))],
             [sg.Text(' ' * 210, font=("Roboto", 4), pad=(5, 0))],
-            [sg.Text('Keep checking for new post? \nChecks for new post every 5 mins', size=(28, 2), font=("Roboto", 8)),
+            [sg.Text('Keep checking for new post? \nChecks for new post every 5 mins', size=(28, 2),
+                     font=("Roboto", 8)),
              sg.InputCombo(('Yes', 'No'), default_value="Yes", key="keep_checking", size=(6, 1))],
 
         ], title='Instagram Scrapping Options', title_color="#ffffff"), sg.Column(login)],
@@ -126,7 +134,7 @@ def the_gui():
             [sg.Text('Number of posts before program stops', size=(50, 0), font=("Roboto", 8))],
         ], title='General Options', title_color="#ffffff"), sg.Column(output)],
         # Buttons
-        [sg.Button('Run', size=(10, 1)), sg.Button('Exit', size=(10, 1))]
+        [sg.Button('Run', size=(10, 1), key="Run"), sg.Button('Exit', size=(10, 1))]
     ]
     # Window options
     window = sg.Window('Made with love', layout, default_element_size=(40, 1), grab_anywhere=False, location=(5, 5))
@@ -143,14 +151,16 @@ def the_gui():
                                  "cosmic-webtoon", "cosplay", "gaming", "girl", "girlcelebrity",
                                  "leagueoflegends", "meme", "nsfw", "politics", "relationship", "savage", "wtf"]
 
-            # Sends user inputs to settings.py
+            # Sends selected 9gag categories to settings.py
             for key in values:
                 if key in ninegagCategories and values[key]:
                     settings.ninegag_categories.append(key)
             # Checks with verification function
-
             if verifications(values):
+                # disables the Run button when run is clicked
+                window['Run'].update(disabled=True)
                 print("Starting...")
+                # Sends user inputs to settings.py to be set as global variables
                 settings.wait_time = values['wait_time']
                 settings.post_time = values['post_time']
                 settings.username = values['username']
@@ -160,6 +170,7 @@ def the_gui():
                 settings.scrape_user = values['scrape_user']
                 settings.past_images = values['past_images']
                 settings.post_source = values['post_source']
+                # Converts keep_checking into a boolean
                 if values['keep_checking'] == 'Yes':
                     settings.keep_checking = True
                 else:

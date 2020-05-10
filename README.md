@@ -34,8 +34,10 @@
 * Automaticlly resizes images to fit Instagram  
 * Simulates real clicking
    
-  
-![Aimeos TYPO3 demo](https://i.imgur.com/do77oSN.png)
+<p align="center">
+  <img src="https://i.imgur.com/do77oSN.png" width="70%">
+</p> 
+
   
   
 ## Installation  
@@ -54,8 +56,6 @@ This project is Selenium based and requires a `chromedriver`. I have already inc
 ## Running
 **Option 1:** Easy way:
 ``python app.py``
-or
-``python3 app.py``
 
 **Option 2:** Easiest way (Windows):
 Launch the app.exe from the executable direcotory  

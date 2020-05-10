@@ -7,6 +7,8 @@ import os
 def init():
     global ninegag_categories, username, password, wait_time, post_time, login_type, \
         post_limit, filesDict, filesCheck, scrape_user, keep_checking, past_images, post_source, counter
+
+    # User inputted info set as variables
     ninegag_categories = []
     username = ""
     password = ""
@@ -19,17 +21,21 @@ def init():
     post_source = ""
     counter = 0
     keep_checking = True
-    # Creates assets folder if non-existent
-    if not os.path.exists('assets'):
-        os.makedirs('assets')
+    filesDict = {'dict': []}
+
+    # Creates images folder if non-existent
+    if not os.path.exists('images'):
+        os.makedirs('images')
+
     # Removes images from files if left over from previous runs
-    files = glob.glob('assets/*')
+    files = glob.glob('images/*')
     for f in files:
         os.remove(f)
-    filesDict = {'dict': []}
-    # Clears filesDict on start
+
+    # Clears filesDict.JSON on start
     with open('filesDict.json', 'w+', encoding="utf8") as outfile:
         json.dump(filesDict, outfile, ensure_ascii=False)
+
     # Creates filesCheck if not existent
     try:
         file = open('filesCheck.txt', 'r')
@@ -37,7 +43,9 @@ def init():
     except IOError:
         file = open('filesCheck.txt', 'w')
         file.close()
+
     # Handles removing old items from filesCheck.txt and filling the filesCheck array
+    # keeps the 100 most recent downloads
     count = 0
     with open('filesCheck.txt', 'r') as f:
         data = f.read().splitlines(True)

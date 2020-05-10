@@ -22,16 +22,20 @@ def print_results(data):
     theJSON = json.loads(data)
     # Loops through the JSON
     for i in theJSON["data"]["posts"]:
-        # Checks if its a new file or has already downloaded and if the file height is less than 2300
+
+        # Checks if its a new file or has already downloaded and if the file height is less than 2000
         if i["type"] == "Photo" and i["id"] not in settings.filesCheck and i["images"]["image700"]["height"] < 2000:
+
             # calls download function and passes arg
-            download(i["images"]["image700"]["url"], 'assets/', i["id"])
+            download(i["images"]["image700"]["url"], 'images/', i["id"])
+
             # Uses PIL to format image if its height is bigger than its width
             if i["images"]["image700"]["height"] > i["images"]["image700"]["width"]:
-                image = Image.open('assets/' + i["id"] + '.jpg')
+                image = Image.open('images/' + i["id"] + '.jpg')
                 new_image = make_square(image)
-                new_image.save('assets/' + i["id"] + '.jpg')
+                new_image.save('images/' + i["id"] + '.jpg')
             print("Downloading image: \n" + i["images"]["image700"]["url"])
+
             # checks if any changes were made to the file filesDict
             try:
                 with open('filesDict.json', encoding="utf8") as data_file:
@@ -39,7 +43,7 @@ def print_results(data):
             except:
                 pass
 
-            # Add info into filesDict
+            # Add info into filesDict array
             settings.filesDict['dict'].append({
                 'id': i["id"],
                 'title': html.unescape(i["title"]).encode('ascii', 'ignore').decode('ascii'),
@@ -50,31 +54,34 @@ def print_results(data):
             # appends id into fileCheck
             settings.filesCheck.append(i["id"])
 
-            # Saves fileArray to a file
+            # saves fileDict array into fileDict.json
             with open('filesDict.json', 'w+', encoding="utf8") as outfile:
                 json.dump(settings.filesDict, outfile, ensure_ascii=False)
 
-        # Saves past files ids into fileCheck.txt
+        # saves ids in fileCheck array into fileCheck.txt
         with open('filesCheck.txt', 'w') as filehandle:
             for listitem in settings.filesCheck:
                 filehandle.write('%s\n' % listitem)
 
 
 def get_data():
+    # loops through 9gag section user chose
     for x in settings.ninegag_categories:
         try:
-            # Gets the JSON from the URL and send a header so that it looks like a legit request
             if x in ("hot","trending"):
                 urlData = "https://9gag.com/v1/group-posts/group/default/type/" + x
             else:
                 urlData = "https://9gag.com/v1/group-posts/group/" + x
 
+            # Gets the JSON from the URL and sends a header so that it looks like a legit request
             user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
             headers = {'User-Agent': user_agent, }
             print("Getting images from category: " + x)
+
             # Opens the URL
             request = urllib.request.Request(urlData, None, headers=headers)
             webUrl = urllib.request.urlopen(request)
+
             # If URL is opened with success, Then run printResults function
             if webUrl.getcode() == 200:
                 data = webUrl.read()
