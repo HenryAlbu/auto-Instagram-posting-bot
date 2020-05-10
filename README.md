@@ -59,7 +59,7 @@ This project is Selenium based and requires a `chromedriver`. I have already inc
 
 **Option 2:** Easiest way (Windows):
 Launch the app.exe from the executable directory  
-## Files   
+## File structure
   
 
 | Files/Folders | Description |
@@ -91,7 +91,7 @@ Currently the bot only uploads images. This is due to the fact that it is using 
 This project uses Selenium. What this basically means is that it does not use the instagram API for posting, making Instagram think that it's a real user posting, **BUT**
 You should still be cautious by setting a reasonable wait times before posts. By default this is set at 50 seconds. If you set it to something like 10 seconds, there is a chance that Instagram will notice bot activity. 
 
-## Currently working on
+## TODOs
 * Adding Imgur.com to the list of options to take images from
 
 * Ability to add your own files to queue. Kind of like those sites that charge you to scheduale Instagram posts.
