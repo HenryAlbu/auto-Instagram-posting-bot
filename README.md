@@ -28,7 +28,7 @@
 * Multiple 9gag categories   
 * Log into Instagram with Facebook credentials 
 * Duplicate post prevention  
-* Get Instagram users past photos and to queue  
+* Get Instagram users past photos and add to queue  
 * Max post limit  
 * Listens for new images 
 * Automatically resizes images to fit Instagram  
