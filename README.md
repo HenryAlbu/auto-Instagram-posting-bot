@@ -21,7 +21,7 @@
   <img src="https://media.giphy.com/media/iFV5dUAJQhloDkw9Zz/giphy.gif" width="">
 </p>
 
-## 🚀  Features
+## Features
 
 * Adjustable interval between posts   
 * Original captions/title as post captions  
