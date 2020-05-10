@@ -21,17 +21,17 @@
   <img src="https://media.giphy.com/media/iFV5dUAJQhloDkw9Zz/giphy.gif" width="">
 </p>
 
-## Features
+## 🚀  Features
 
-* Adjustable intervals between posts   
-* Original captions or title from 9gag and Instagram as post captions  
+* Adjustable interval between posts   
+* Original captions/title as post captions  
 * Multiple 9gag categories   
 * Log into Instagram with Facebook credentials 
 * Duplicate post prevention  
 * Get Instagram users past photos and add photos those to queue  
-* Set max post limit  
-* Watches for new images 
-* Automaticlly resizes images to fit Instagram  
+* Max post limit  
+* Listens for new images 
+* Automatically resize images to fit Instagram  
 * Simulates real clicking
    
 <p align="center">
@@ -58,7 +58,7 @@ This project is Selenium based and requires a `chromedriver`. I have already inc
 ``python app.py``
 
 **Option 2:** Easiest way (Windows):
-Launch the app.exe from the executable direcotory  
+Launch the app.exe from the executable directory  
 ## Files   
   
 
@@ -66,17 +66,21 @@ Launch the app.exe from the executable direcotory
 | --- | --- |
 | app.py | The main file for the project, contains the UI and connections calls the other files. (Run this file) |
 | insta.py | Contains the functions and steps that sign you into Instagram. Also contains the Selenium driver options |
-| ninegag.py | Contains the functions to download and qeueu up 9gag posts   |
+| ninegag.py | Contains the functions to download and queue up 9gag posts   |
 | settings.py | Contains the global variables   |
-| insta_scraper.py | Contains the functions to download and qeueu up scrapped instagram posts from selected user   |
+| insta_scraper.py | Contains the functions to download and queue up scrapped Instagram posts from selected user   |
 | filesCheck.txt | (created on initial run) Contains the id's of images that have been downloaded to prevent duplicate uploads (keeps the last 50 id's) |
 | filesDict.json | (created on initial run) When images are downloaded they are given an id's and put into this json file that acts as the queue |
-| files (folder) | (created on initial run) Where the images are downloaded to. This folder get cleared on every program start |
+| images (folder) | (created on initial run) Where the images are downloaded to. This folder get cleared on every program start |
+| assets (folder) | Contains chromedriver and Autoit files |
   
   
 ## UI  
   
-![Execute update script](https://i.imgur.com/wOwNMsi.png)  
+<p align="center">
+  <img src="https://i.imgur.com/wOwNMsi.png" width="70%">
+</p>   
+  
   
 ## Limitations  
   
@@ -84,15 +88,15 @@ Currently the bot only uploads images. This is due to the fact that it is using 
   
  ## Caution 
   
-This project uses Selenium. What this basiclly means is that it does not use the instagram API for posting, making instagram think that it's a real user posting, **BUT**
-You should still be cautious by setting a resonable wait times before posts. By defult this is set at 50 seconds. If you set it to something like 10 seconds, there is a chance that Instagram will notice bot activity. 
+This project uses Selenium. What this basically means is that it does not use the instagram API for posting, making Instagram think that it's a real user posting, **BUT**
+You should still be cautious by setting a reasonable wait times before posts. By default this is set at 50 seconds. If you set it to something like 10 seconds, there is a chance that Instagram will notice bot activity. 
 
 ## Currently working on
-**#1 -** Adding Imgur.com to the list of options to take images from
+* Adding Imgur.com to the list of options to take images from
 
-**#2 -** Ability to add your own files to queue. Kind of like those sites that charge you to scheduale Instagram posts.
+* Ability to add your own files to queue. Kind of like those sites that charge you to scheduale Instagram posts.
 
-**#3 -** Figuring out how to get videos to upload
+* Figuring out how to get videos to upload
 
 If you want to contribute to the project, I would greatly appreciate it :) 
 
