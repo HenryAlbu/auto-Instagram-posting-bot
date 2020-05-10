@@ -31,7 +31,7 @@
 * Get Instagram users past photos and add photos those to queue  
 * Max post limit  
 * Listens for new images 
-* Automatically resize images to fit Instagram  
+* Automatically resizes images to fit Instagram  
 * Simulates real clicking
    
 <p align="center">
