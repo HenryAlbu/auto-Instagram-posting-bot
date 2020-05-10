@@ -1,3 +1,4 @@
+#!/usr/bin/env Python3
 import html
 import settings
 import json

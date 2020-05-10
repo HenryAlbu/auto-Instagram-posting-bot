@@ -1,3 +1,4 @@
+#!/usr/bin/env Python3
 import urllib.request
 import json, html, settings
 from PIL import Image

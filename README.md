@@ -54,11 +54,10 @@ Install the requirments:
 This project is Selenium based and requires a `chromedriver`. I have already included one in the project files for Chrome 81/Windows. If you want to get a newer version or for a diffrent OS, [download it here](https://sites.google.com/a/chromium.org/chromedriver/downloads) and drag and drop it into the directory.
 
 ## Running
-**Option 1:** Easy way:
+Just run: 
 ``python app.py``
 
-**Option 2:** Easiest way (Windows):
-Launch the app.exe from the executable directory  
+ 
 ## File structure
   
 

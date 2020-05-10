@@ -1,4 +1,4 @@
-# Initializes setting files
+#!/usr/bin/env Python3
 import json
 import glob
 import os

@@ -137,7 +137,7 @@ def the_gui():
         [sg.Button('Run', size=(10, 1), key="Run"), sg.Button('Exit', size=(10, 1))]
     ]
     # Window options
-    window = sg.Window('Made with love', layout, default_element_size=(40, 1), grab_anywhere=False, location=(5, 5))
+    window = sg.Window('Made with love - v1.0', layout, default_element_size=(40, 1), grab_anywhere=False, location=(5, 5))
 
     while True:
         event, values = window.read(timeout=100)
