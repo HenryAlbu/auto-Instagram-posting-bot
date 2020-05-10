@@ -2,7 +2,7 @@
 from time import sleep
 import json
 import os
-import platform
+import autoit
 import settings
 import insta_scraper
 import ninegag
@@ -22,7 +22,7 @@ def launch_inst():
     opts = webdriver.ChromeOptions()
     opts.add_argument("window-size=1,765")
     opts.add_experimental_option("mobileEmulation", mobile_emulation)
-    driver = webdriver.Chrome(executable_path=r"assets/chromedriver.exe", options=opts)
+    driver = webdriver.Chrome(executable_path=r"chromedriver.exe", options=opts)
 
 
     # Opens Instagram
@@ -104,12 +104,9 @@ def post():
 
     # Opens File Explore window
     print("Opening file explorer")
-    # launches FileUpload.exe to upload file on file explore
-    if platform.architecture()[0] == "64bit":
-        os.system("assets/FileUpload64.exe " + image_path)
-    else:
-        os.system("assets/FileUpload64.exe " + image_path)
-
+    autoit.win_active("Open")
+    autoit.control_set_text("Open", "Edit1", image_path)
+    autoit.control_send("Open", "Edit1", "{ENTER}")
     sleep(settings.wait_time)
 
     # depending on aspect ratio, sometimes this button does not exist

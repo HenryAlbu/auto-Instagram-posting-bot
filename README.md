@@ -71,7 +71,7 @@ Just run:
 | filesCheck.txt | (created on initial run) Contains the id's of images that have been downloaded to prevent duplicate uploads (keeps the last 50 id's) |
 | filesDict.json | (created on initial run) When images are downloaded they are given an id's and put into this json file that acts as the queue |
 | images (folder) | (created on initial run) Where the images are downloaded to. This folder get cleared on every program start |
-| assets (folder) | Contains chromedriver and Autoit files |
+
   
   
 ## UI  
