@@ -1,5 +1,5 @@
 selenium==3.141.0
-Pillow==7.1.2
+Pillow==8.2.0
 PySimpleGUI==4.19.0
 instagram-scraper==1.9.0
 PyAutoIt==0.6.0
